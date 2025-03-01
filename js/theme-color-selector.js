@@ -1,126 +1,116 @@
-// Theme Color Selector Functionality
+// Theme Color Selector Module
 
-// Available theme colors
-const themeColors = {
-    blue: {
-        primary: '#3a8eff',
-        hover: '#2a7de9',
-        focus: 'rgba(58, 142, 255, 0.5)'
+const themeColorSelector = {
+    // Available color themes
+    colors: {
+        default: {
+            primary: '#0d6efd',
+            secondary: '#6c757d',
+            success: '#198754',
+            info: '#0dcaf0',
+            warning: '#ffc107',
+            danger: '#dc3545'
+        },
+        blue: {
+            primary: '#1976d2',
+            secondary: '#607d8b',
+            success: '#43a047',
+            info: '#03a9f4',
+            warning: '#ffb300',
+            danger: '#e53935'
+        },
+        green: {
+            primary: '#2e7d32',
+            secondary: '#546e7a',
+            success: '#388e3c',
+            info: '#00acc1',
+            warning: '#ffa000',
+            danger: '#d32f2f'
+        }
     },
-    green: {
-        primary: '#4caf50',
-        hover: '#3d8b40',
-        focus: 'rgba(76, 175, 80, 0.5)'
+
+    // Initialize color selector
+    init: function() {
+        // Check for saved color theme
+        const savedTheme = localStorage.getItem('colorTheme');
+        if (savedTheme && this.colors[savedTheme]) {
+            this.applyColorTheme(savedTheme);
+        }
+
+        // Create color selector if it doesn't exist
+        this.createColorSelector();
+
+        console.log('Theme color selector initialized');
     },
-    purple: {
-        primary: '#9c27b0',
-        hover: '#7b1fa2',
-        focus: 'rgba(156, 39, 176, 0.5)'
+
+    // Create color selector UI
+    createColorSelector: function() {
+        const container = document.createElement('div');
+        container.className = 'color-selector';
+        container.innerHTML = `
+            <div class="color-selector-toggle">
+                <i class="fas fa-palette"></i>
+            </div>
+            <div class="color-selector-menu">
+                ${Object.keys(this.colors).map(theme => `
+                    <div class="color-option" data-theme="${theme}">
+                        <span class="color-preview" style="background-color: ${this.colors[theme].primary}"></span>
+                        <span class="color-name">${theme}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+
+        // Add event listeners
+        container.querySelectorAll('.color-option').forEach(option => {
+            option.addEventListener('click', () => {
+                this.applyColorTheme(option.dataset.theme);
+            });
+        });
+
+        // Add toggle functionality
+        const toggle = container.querySelector('.color-selector-toggle');
+        const menu = container.querySelector('.color-selector-menu');
+        toggle.addEventListener('click', () => {
+            menu.classList.toggle('show');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!container.contains(e.target)) {
+                menu.classList.remove('show');
+            }
+        });
+
+        document.body.appendChild(container);
     },
-    orange: {
-        primary: '#ff9800',
-        hover: '#f57c00',
-        focus: 'rgba(255, 152, 0, 0.5)'
-    },
-    teal: {
-        primary: '#009688',
-        hover: '#00796b',
-        focus: 'rgba(0, 150, 136, 0.5)'
+
+    // Apply color theme
+    applyColorTheme: function(themeName) {
+        if (!this.colors[themeName]) return;
+
+        const theme = this.colors[themeName];
+        const root = document.documentElement;
+
+        // Set CSS variables
+        Object.entries(theme).forEach(([key, value]) => {
+            root.style.setProperty(`--${key}-color`, value);
+        });
+
+        // Save theme preference
+        localStorage.setItem('colorTheme', themeName);
+
+        // Update active state in selector
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.classList.toggle('active', option.dataset.theme === themeName);
+        });
     }
 };
 
-// Function to create the theme color selector
-function createThemeColorSelector() {
-    // Check if the selector already exists
-    if (document.querySelector('.theme-color-selector')) {
-        // If it exists, make sure it has the event listener
-        const existingSelector = document.querySelector('.theme-color-selector');
-        
-        // Remove existing event listeners to avoid duplicates
-        const newSelector = existingSelector.cloneNode(true);
-        existingSelector.parentNode.replaceChild(newSelector, existingSelector);
-        
-        // Add the click event listener
-        newSelector.addEventListener('click', toggleColorOptions);
-        return;
-    }
-    
-    // Create the theme color selector button
-    const themeColorSelector = document.createElement('div');
-    themeColorSelector.className = 'theme-color-selector';
-    themeColorSelector.setAttribute('title', 'تخصيص الألوان');
-    themeColorSelector.innerHTML = '<i class="fas fa-palette"></i>';
-    themeColorSelector.addEventListener('click', toggleColorOptions);
-    
-    // Create the color options container
-    const colorOptions = document.createElement('div');
-    colorOptions.className = 'theme-color-options';
-    
-    // Add color options
-    Object.keys(themeColors).forEach(color => {
-        const colorOption = document.createElement('div');
-        colorOption.className = `color-option ${color}`;
-        colorOption.setAttribute('data-color', color);
-        colorOption.setAttribute('title', color);
-        colorOption.addEventListener('click', () => applyThemeColor(color));
-        colorOptions.appendChild(colorOption);
-    });
-    
-    // Close color options when clicking outside
-    document.addEventListener('click', (event) => {
-        const selector = document.querySelector('.theme-color-selector');
-        const options = document.querySelector('.theme-color-options');
-        if (selector && options && !selector.contains(event.target) && !options.contains(event.target)) {
-            options.classList.remove('show');
-        }
-    });
-    
-    // Append elements to the body
-    document.body.appendChild(themeColorSelector);
-    document.body.appendChild(colorOptions);
-}
+// Initialize color selector on page load
+document.addEventListener('DOMContentLoaded', () => {
+    themeColorSelector.init();
+});
 
-// Function to toggle color options visibility
-function toggleColorOptions() {
-    const colorOptions = document.querySelector('.theme-color-options');
-    if (colorOptions) {
-        colorOptions.classList.toggle('show');
-    }
-}
-
-// Function to apply the selected theme color
-function applyThemeColor(color) {
-    // Get the selected color theme
-    const selectedTheme = themeColors[color];
-    if (!selectedTheme) return;
-    
-    // Remove existing theme classes
-    document.body.classList.remove('theme-blue', 'theme-green', 'theme-purple', 'theme-orange', 'theme-teal');
-    
-    // Add the new theme class
-    document.body.classList.add(`theme-${color}`);
-    
-    // Update CSS variables for both light and dark mode
-    document.documentElement.style.setProperty('--primary-color', selectedTheme.primary);
-    document.documentElement.style.setProperty('--dark-primary', selectedTheme.primary);
-    
-    // Save the selected theme to localStorage
-    localStorage.setItem('themeColor', color);
-}
-
-// Function to initialize the theme color
-function initializeThemeColor() {
-    // Create the theme color selector
-    createThemeColorSelector();
-    
-    // Check for saved theme color preference
-    const savedThemeColor = localStorage.getItem('themeColor');
-    
-    // Apply saved theme color or default to blue
-    if (savedThemeColor && themeColors[savedThemeColor]) {
-        applyThemeColor(savedThemeColor);
-    }
-}
-
-// Initialize theme color when DOM is fully loaded
-document.addEventListener('DOMContentLoaded', initializeThemeColor);
+// Export theme color selector
+window.themeColorSelector = themeColorSelector;

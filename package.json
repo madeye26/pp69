@@ -1,0 +1,37 @@
+{
+  "name": "badr-payroll-hr",
+  "version": "1.0.0",
+  "description": "Payroll and HR Management System",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "deploy": "firebase deploy",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "firebase": "^10.8.0",
+    "bootstrap": "^5.3.2",
+    "chart.js": "^4.4.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "firebase-tools": "^13.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/badr-payroll-hr.git"
+  },
+  "keywords": [
+    "payroll",
+    "hr",
+    "management",
+    "firebase",
+    "arabic"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yourusername/badr-payroll-hr/issues"
+  },
+  "homepage": "https://github.com/yourusername/badr-payroll-hr#readme"
+}

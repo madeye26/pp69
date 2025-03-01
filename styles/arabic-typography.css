@@ -1,163 +1,148 @@
-:root {
-    --font-cairo: 'Cairo', sans-serif;
-    --font-tajawal: 'Tajawal', sans-serif;
-    --font-amiri: 'Amiri', serif;
-    --line-height-base: 1.6;
-    --letter-spacing-base: 0.01em;
+/* Arabic Typography Styles */
+
+/* Import Cairo Font */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap');
+
+/* Base Typography */
+html, body {
+    font-family: 'Cairo', sans-serif;
+    line-height: 1.6;
 }
 
-/* Enhanced Arabic Typography */
-body {
-    line-height: var(--line-height-base);
-    letter-spacing: var(--letter-spacing-base);
-}
-
-/* Font Family Options */
-.font-cairo {
-    font-family: var(--font-cairo);
-}
-
-.font-tajawal {
-    font-family: var(--font-tajawal);
-}
-
-.font-amiri {
-    font-family: var(--font-amiri);
-}
-
-/* Headings Enhancement */
+/* Headings */
 h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-cairo);
+    font-family: 'Cairo', sans-serif;
     font-weight: 700;
-    margin-bottom: 0.75rem;
-}
-
-/* Paragraph Enhancement */
-p {
+    line-height: 1.3;
     margin-bottom: 1rem;
-    line-height: 1.8;
 }
 
-/* Form Labels Enhancement */
-.form-label {
-    font-family: var(--font-cairo);
-    font-weight: 600;
-}
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
 
-/* Button Text Enhancement */
-.btn {
-    font-family: var(--font-cairo);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-}
-
-/* Table Headers Enhancement */
-.table th {
-    font-family: var(--font-cairo);
-    font-weight: 600;
-}
-
-/* Card Titles Enhancement */
-.card-title, .section-title, .dashboard-chart-title {
-    font-family: var(--font-cairo);
-    font-weight: 700;
-}
-
-/* Sidebar Menu Enhancement */
-.sidebar-heading {
-    font-family: var(--font-cairo);
-    font-weight: 700;
-}
-
-.list-group-item {
-    font-family: var(--font-tajawal);
-    font-weight: 500;
-}
-
-/* Font Size Utility Classes */
-.text-xs {
-    font-size: 0.75rem;
-}
-
-.text-sm {
-    font-size: 0.875rem;
-}
-
-.text-md {
-    font-size: 1rem;
-}
-
-.text-lg {
-    font-size: 1.125rem;
-}
-
-.text-xl {
-    font-size: 1.25rem;
-}
-
-.text-2xl {
-    font-size: 1.5rem;
-}
-
-.text-3xl {
-    font-size: 1.875rem;
-}
-
-/* Font Weight Utility Classes */
-.font-normal {
-    font-weight: 400;
-}
-
-.font-medium {
-    font-weight: 500;
-}
-
-.font-semibold {
-    font-weight: 600;
-}
-
-.font-bold {
-    font-weight: 700;
-}
-
-/* RTL Specific Typography Improvements */
+/* Text Direction */
 [dir="rtl"] {
     text-align: right;
 }
 
-[dir="rtl"] .form-control,
-[dir="rtl"] .form-select {
-    text-align: right;
+/* Numbers */
+.arabic-numbers {
+    font-feature-settings: "kern", "liga", "clig", "calt", "ss01";
 }
 
-/* Improved Readability in Dark Mode */
-body.dark-mode {
-    --line-height-base: 1.7;
+/* Form Elements */
+input, select, textarea {
+    font-family: 'Cairo', sans-serif;
 }
 
-body.dark-mode p {
-    line-height: 1.9;
+/* Buttons */
+.btn {
+    font-family: 'Cairo', sans-serif;
+    font-weight: 600;
 }
 
-/* Responsive Typography */
-@media (max-width: 768px) {
-    h1 {
-        font-size: 1.75rem;
+/* Navigation */
+.nav-link, .navbar-brand {
+    font-family: 'Cairo', sans-serif;
+    font-weight: 600;
+}
+
+/* Tables */
+.table th {
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+}
+
+/* Alerts */
+.alert {
+    font-family: 'Cairo', sans-serif;
+}
+
+/* Cards */
+.card-title {
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+}
+
+/* Font Weights */
+.font-light { font-weight: 300; }
+.font-regular { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+.font-extrabold { font-weight: 800; }
+.font-black { font-weight: 900; }
+
+/* Line Heights */
+.line-tight { line-height: 1.2; }
+.line-snug { line-height: 1.4; }
+.line-normal { line-height: 1.6; }
+.line-relaxed { line-height: 1.8; }
+.line-loose { line-height: 2; }
+
+/* Text Sizes */
+.text-xs { font-size: 0.75rem; }
+.text-sm { font-size: 0.875rem; }
+.text-base { font-size: 1rem; }
+.text-lg { font-size: 1.125rem; }
+.text-xl { font-size: 1.25rem; }
+.text-2xl { font-size: 1.5rem; }
+.text-3xl { font-size: 1.875rem; }
+.text-4xl { font-size: 2.25rem; }
+
+/* Text Alignment for RTL */
+.text-start { text-align: right; }
+.text-end { text-align: left; }
+
+/* Lists */
+ul, ol {
+    padding-right: 1.25rem;
+    padding-left: 0;
+}
+
+/* Form Labels */
+label {
+    font-weight: 600;
+}
+
+/* Placeholders */
+::placeholder {
+    font-family: 'Cairo', sans-serif;
+    opacity: 0.7;
+}
+
+/* Numbers in Tables */
+.table td[data-type="number"] {
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+}
+
+/* Currency */
+.currency {
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+}
+
+/* Date/Time */
+.datetime {
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+    direction: ltr;
+    display: inline-block;
+}
+
+/* Print Styles */
+@media print {
+    body {
+        font-family: 'Cairo', sans-serif !important;
     }
     
-    h2 {
-        font-size: 1.5rem;
-    }
-    
-    h3 {
-        font-size: 1.25rem;
-    }
-    
-    h4 {
-        font-size: 1.125rem;
-    }
-    
-    p {
-        font-size: 0.95rem;
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Cairo', sans-serif !important;
+        page-break-after: avoid;
     }
 }

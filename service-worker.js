@@ -1,98 +1,134 @@
-/**
- * Service Worker for Payroll System
- * Provides offline capabilities and caching of static assets
- */
+// Service Worker for Offline Support
 
-const CACHE_NAME = 'payroll-cache-v1';
-const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/styles/main.css',
-  '/styles/chart-styles.css',
-  '/styles/dashboard-styles.css',
-  '/styles/dark-theme.css',
-  '/styles/arabic-typography.css',
-  '/js/main.js',
-  '/js/charts.js',
-  '/js/dashboard-customizer.js',
-  '/js/dashboard-drag-drop.js',
-  '/js/leave-management.js',
-  '/js/payroll.js',
-  '/js/reports.js',
-  '/js/theme-color-selector.js',
-  '/js/theme-switcher.js',
-  '/js/time-tracking.js',
-  '/js/performance-optimizations.js'
+const CACHE_NAME = 'pp69-cache-v1';
+const STATIC_ASSETS = [
+    '/',
+    '/index.html',
+    '/styles/main.css',
+    '/styles/arabic-typography.css',
+    '/js/app-init.js',
+    '/js/firebase-init.js',
+    '/js/firebase-operations.js',
+    '/js/main.js',
+    '/js/employees.js',
+    '/js/payroll.js',
+    '/js/reports.js',
+    '/js/utils.js',
+    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js',
+    'https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js',
+    'https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&display=swap'
 ];
 
-// Install event - cache static assets
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(ASSETS_TO_CACHE);
-      })
-      .then(() => self.skipWaiting())
-  );
+// Install Service Worker
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then((cache) => {
+                console.log('Opened cache');
+                return cache.addAll(STATIC_ASSETS);
+            })
+            .catch((error) => {
+                console.error('Cache installation error:', error);
+            })
+    );
 });
 
-// Activate event - clean up old caches
-self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
+// Activate Service Worker
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== CACHE_NAME) {
+                        console.log('Deleting old cache:', cacheName);
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
         })
-      );
-    }).then(() => self.clients.claim())
-  );
+    );
 });
 
-// Fetch event - serve from cache, fall back to network
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Cache hit - return response
-        if (response) {
-          return response;
-        }
+// Fetch Event Strategy
+self.addEventListener('fetch', (event) => {
+    // Skip cross-origin requests
+    if (!event.request.url.startsWith(self.location.origin)) {
+        return;
+    }
 
-        // Clone the request
-        const fetchRequest = event.request.clone();
+    // Handle Firebase API requests differently
+    if (event.request.url.includes('firestore.googleapis.com')) {
+        // Let Firebase handle its own caching
+        return;
+    }
 
-        return fetch(fetchRequest).then(response => {
-          // Check if valid response
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
+    event.respondWith(
+        caches.match(event.request)
+            .then((response) => {
+                // Return cached response if found
+                if (response) {
+                    return response;
+                }
 
-          // Clone the response
-          const responseToCache = response.clone();
+                // Clone the request because it's a one-time use stream
+                const fetchRequest = event.request.clone();
 
-          // Only cache static assets and API responses
-          const url = event.request.url;
-          if (url.includes('/styles/') || url.includes('/js/') || url.includes('/images/') || url.includes('/api/')) {
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, responseToCache);
-              });
-          }
+                return fetch(fetchRequest)
+                    .then((response) => {
+                        // Check if response is valid
+                        if (!response || response.status !== 200 || response.type !== 'basic') {
+                            return response;
+                        }
 
-          return response;
-        });
-      })
-  );
+                        // Clone the response because it's a one-time use stream
+                        const responseToCache = response.clone();
+
+                        caches.open(CACHE_NAME)
+                            .then((cache) => {
+                                cache.put(event.request, responseToCache);
+                            });
+
+                        return response;
+                    })
+                    .catch(() => {
+                        // Return offline page if fetch fails
+                        return caches.match('/offline.html');
+                    });
+            })
+    );
 });
 
-// Handle messages from clients
-self.addEventListener('message', event => {
-  if (event.data.action === 'skipWaiting') {
-    self.skipWaiting();
-  }
+// Handle Background Sync
+self.addEventListener('sync', (event) => {
+    if (event.tag === 'syncData') {
+        event.waitUntil(
+            // Sync data with server when online
+            syncData()
+        );
+    }
+});
+
+// Handle Push Notifications
+self.addEventListener('push', (event) => {
+    const options = {
+        body: event.data.text(),
+        icon: '/icon.png',
+        badge: '/badge.png',
+        dir: 'rtl',
+        lang: 'ar'
+    };
+
+    event.waitUntil(
+        self.registration.showNotification('نظام الرواتب', options)
+    );
+});
+
+// Handle Notification Click
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    event.waitUntil(
+        clients.openWindow('/')
+    );
 });

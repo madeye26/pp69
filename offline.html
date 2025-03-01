@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>غير متصل - نظام الرواتب والموارد البشرية</title>
+    
+    <!-- Bootstrap RTL -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/arabic-typography.css">
+
+    <style>
+        .offline-container {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .offline-content {
+            max-width: 500px;
+        }
+
+        .offline-icon {
+            font-size: 5rem;
+            color: #6c757d;
+            margin-bottom: 2rem;
+        }
+
+        .offline-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .offline-message {
+            font-size: 1.1rem;
+            color: #6c757d;
+            margin-bottom: 2rem;
+        }
+
+        .retry-button {
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-content">
+            <div class="offline-icon">
+                <i class="fas fa-wifi-slash"></i>
+            </div>
+            <h1 class="offline-title">لا يوجد اتصال بالإنترنت</h1>
+            <p class="offline-message">
+                يبدو أنك غير متصل بالإنترنت. يمكنك الوصول إلى البيانات المخزنة مسبقاً،
+                ولكن لن تتمكن من إجراء تغييرات حتى تستعيد الاتصال.
+            </p>
+            <button class="btn btn-primary retry-button" onclick="window.location.reload()">
+                <i class="fas fa-sync-alt me-2"></i>
+                إعادة المحاولة
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Check connection status
+        function checkConnection() {
+            if (navigator.onLine) {
+                window.location.href = '/';
+            }
+        }
+
+        // Listen for online event
+        window.addEventListener('online', checkConnection);
+
+        // Check connection when retry button is clicked
+        document.querySelector('.retry-button').addEventListener('click', (e) => {
+            e.preventDefault();
+            checkConnection();
+        });
+    </script>
+</body>
+</html>

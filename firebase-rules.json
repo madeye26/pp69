@@ -1,0 +1,58 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": true,
+    "employees": {
+      ".read": true,
+      ".write": true,
+      "$employeeId": {
+        ".validate": "newData.hasChildren(['code', 'name', 'jobTitle', 'basicSalary'])",
+        "code": { ".validate": "newData.isString()" },
+        "name": { ".validate": "newData.isString()" },
+        "jobTitle": { ".validate": "newData.isString()" },
+        "basicSalary": { ".validate": "newData.isNumber()" },
+        "monthlyIncentives": { ".validate": "newData.isNumber() || !newData.exists()" },
+        "dailyRate": { ".validate": "newData.isNumber() || !newData.exists()" },
+        "overtimeRate": { ".validate": "newData.isNumber() || !newData.exists()" },
+        "status": { ".validate": "newData.isString() && (newData.val() === 'active' || newData.val() === 'inactive')" }
+      }
+    },
+    "salaries": {
+      ".read": true,
+      ".write": true,
+      "$salaryId": {
+        ".validate": "newData.hasChildren(['employeeCode', 'month', 'basicSalary', 'netSalary'])",
+        "employeeCode": { ".validate": "newData.isString()" },
+        "month": { ".validate": "newData.isString()" },
+        "basicSalary": { ".validate": "newData.isNumber()" },
+        "monthlyIncentives": { ".validate": "newData.isNumber() || !newData.exists()" },
+        "overtimeValue": { ".validate": "newData.isNumber() || !newData.exists()" },
+        "totalDeductions": { ".validate": "newData.isNumber() || !newData.exists()" },
+        "netSalary": { ".validate": "newData.isNumber()" }
+      }
+    },
+    "advances": {
+      ".read": true,
+      ".write": true,
+      "$advanceId": {
+        ".validate": "newData.hasChildren(['employeeCode', 'amount', 'date'])",
+        "employeeCode": { ".validate": "newData.isString()" },
+        "amount": { ".validate": "newData.isNumber() && newData.val() > 0" },
+        "date": { ".validate": "newData.isString()" },
+        "status": { ".validate": "newData.isString() && (newData.val() === 'pending' || newData.val() === 'approved' || newData.val() === 'rejected' || newData.val() === 'paid')" }
+      }
+    },
+    "attendance": {
+      ".read": true,
+      ".write": true,
+      "$attendanceId": {
+        ".validate": "newData.hasChildren(['employeeCode', 'date'])",
+        "employeeCode": { ".validate": "newData.isString()" },
+        "date": { ".validate": "newData.isString()" },
+        "status": { ".validate": "newData.isString() && (newData.val() === 'present' || newData.val() === 'absent' || newData.val() === 'late')" },
+        "lateHours": { ".validate": "newData.isNumber() || !newData.exists()" },
+        "overtimeHours": { ".validate": "newData.isNumber() || !newData.exists()" }
+      }
+    }
+  }
+}
